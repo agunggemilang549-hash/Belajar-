@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Edukasi SMK</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            background-color: #000000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            margin: 10px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            padding: 20px;
+        }
+        .jurusan {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .materi {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #eaeaea;
+            border-radius: 5px;
+        }
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: #ffffff;
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        .article {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+        .favorite {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #d1ffd1;
+            border-radius: 5px;
+        }
+        @media (max-width: 600px) {
+            nav {
+                display: flex;
+                flex-direction: column;
+            }
+            nav a {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Portal Edukasi SMK</h1>
+    <p>Selamat datang di Ruang Guru Ecek - Ecek, tempat belajar dan berbagi informasi pendidikan.</p>
+    <nav>
+        <a href="#home" onclick="showSection('home')">Home</a>
+        <a href="#jurusan" onclick="showSection('jurusan')">Jurusan</a>
+        <a href="#artikel" onclick="showSection('artikel')">Artikel</a>
+        <a href="#favorit" onclick="showSection('favorit')">Favorit</a>
+        <a href="#kontak" onclick="showSection('kontak')">Kontak</a>
+        <a href="#" onclick="toggleDarkMode()">Dark Mode</a>
+    </nav>
+</header>
+
+<div class="container" id="home">
+    <h2>Selamat Datang di Portal Edukasi SMK</h2>
+    <p>Portal ini menyediakan informasi mengenai jurusan-jurusan yang ada di SMK serta artikel-artikel pendidikan.</p>
+</div>
+
+<div class="container" id="jurusan" style="display: none;">
+    <h2>Jurusan</h2>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Cari materi..." onkeyup="searchMateri()">
+    </div>
+    <div class="jurusan" onclick="showMateri('akuntansi')">
+        <h3>Akuntansi</h3>
+    </div>
+    <div class="jurusan" onclick="showMateri('perkantoran')">
+        <h3>Perkantoran / Manajemen Perkantoran</h3>
+    </div>
+    <div class="jurusan" onclick="showMateri('tkj')">
+        <h3>Teknik Komputer & Jaringan (TKJ)</h3>
+    </div>
+    <div class="jurusan" onclick="showMateri('rpl')">
+        <h3>Rekayasa Perangkat Lunak (RPL)</h3>
+    </div>
+    <div class="jurusan" onclick="showMateri('pemasaran')">
+        <h3>Bisnis Ritel / Pemasaran</h3>
+    </div>
+    <div id="materi" style="display: none;"></div>
+</div>
+
+<div class="container" id="artikel" style="display: none;">
+    <h2>Artikel</h2>
+    <div id="articleList"></div>
+</div>
+
+<div class="container" id="favorit" style="display: none;">
+    <h2>Artikel Favorit</h2>
+    <div id="favoriteList"></div>
+</div>
+
+<div class="container" id="kontak" style="display: none;">
+    <h2>Kontak</h2>
+    <p>Untuk informasi lebih lanjut, silakan hubungi kami melalui email: info@ruangguruecek.com</p>
+</div>
+
+<footer>
+    <p>Website ini dirancang oleh: Agung, Andini, Laura, Syahnia, Glory, Agnes, Jos, Tiara</p>
+</footer>
+
+<script>
+    const articles = [
+        { title: "Pentingnya Pendidikan Karakter", content: "Pendidikan karakter sangat penting untuk membentuk kepribadian siswa." },
+        { title: "Teknologi dalam Pendidikan", content: "Teknologi dapat meningkatkan efektivitas pembelajaran." },
+        { title: "Keterampilan Abad 21", content: "Keterampilan seperti berpikir kritis dan kolaborasi sangat dibutuhkan." }
+    ];
+
+    const favoriteArticles = [];
+
+    function showSection(section) {
+        const sections = ['home', 'jurusan', 'artikel', 'favorit', 'kontak'];
+        sections.forEach(s => {
+            document.getElementById(s).style.display = (s === section) ? 'block' : 'none';
+        });
+        document.getElementById('materi').style.display = 'none'; // Hide materi when switching sections
+        if (section === 'artikel') {
+            loadArticles();
+        } else if (section === 'favorit') {
+            loadFavorites();
+        }
+    }
+
+    function showMateri(jurusan) {
+        let materiContent = '';
+        switch (jurusan) {
+            case 'akuntansi':
+                materiContent = `
+                    <div class="materi">
+                        <h3>Materi Dasar Kelas 12 SMK - Akuntansi</h3>
+                        <ul>
+                            <li><strong>Akuntansi perusahaan dagang dan jasa:</strong> Mencatat transaksi jual beli barang dan jasa.</li>
+                            <li><strong>Penyusunan laporan keuangan:</strong> Menyusun laporan laba rugi, neraca, perubahan modal.</li>
+                            <li><strong>Jurnal penyesuaian dan penutupan buku:</strong> Menyelesaikan catatan akhir periode.</li>
+                            <li><strong>Analisis laporan keuangan:</strong> Mengukur kinerja perusahaan dengan rasio keuangan.</li>
+                            <li><strong>Perpajakan dasar:</strong> Menghitung PPh dan PPN.</li>
+                        </ul>
+                    </div>`;
+                break;
+            case 'perkantoran':
+                materiContent = `
+                    <div class="materi">
+                        <h3>Materi Dasar Kelas 12 SMK - Perkantoran</h3>
+                        <ul>
+                            <li><strong>Korespondensi bisnis:</strong> Membuat surat resmi, laporan, email.</li>
+                            <li><strong>Pengelolaan arsip dan dokumen:</strong> Menyimpan dan menemukan arsip manual maupun digital.</li>
+                            <li><strong>Etika komunikasi bisnis:</strong> Sikap sopan, profesional, bahasa baku.</li>
+                            <li><strong>Administrasi perkantoran modern:</strong> Menggunakan Microsoft Office / Google Workspace.</li>
+                            <li><strong>Manajemen jadwal dan rapat:</strong> Membuat agenda, notulen, mengatur waktu kegiatan.</li>
+                        </ul>
+                    </div>`;
+                break;
+            case 'tkj':
+                materiContent = `
+                    <div class="materi">
+                        <h3>Materi Dasar Kelas 12 SMK - Teknik Komputer & Jaringan (TKJ)</h3>
+                        <ul>
+                            <li><strong>Konfigurasi LAN, WAN, WLAN:</strong> Membuat jaringan komputer lokal, luas, dan wireless.</li>
+                            <li><strong>Instalasi & troubleshooting jaringan:</strong> Mengatur IP, router, switch, memperbaiki masalah.</li>
+                            <li><strong>Keamanan jaringan dasar:</strong> Firewall, enkripsi, proteksi serangan siber.</li>
+                            <li><strong>Server administration:</strong> Web server, DNS, mail server.</li>
+                            <li><strong>Virtualisasi & cloud computing:</strong> Mengenal Google Cloud, AWS.</li>
+                        </ul>
+                    </div>`;
+                break;
+            case 'rpl':
+                materiContent = `
+                    <div class="materi">
+                        <h3>Materi Dasar Kelas 12 SMK - Rekayasa Perangkat Lunak (RPL)</h3>
+                        <ul>
+                            <li><strong>Pemrograman berbasis objek:</strong> Class, objek, inheritance, polymorphism (Java/Python/C#).</li>
+                            <li><strong>Pengembangan aplikasi web:</strong> HTML, CSS, JavaScript, PHP/MySQL.</li>
+                            <li><strong>Software Development Life Cycle (SDLC):</strong> Perencanaan, analisis, desain, implementasi, pemeliharaan.</li>
+                            <li><strong>UI/UX dasar:</strong> Mendesain tampilan aplikasi menarik dan mudah digunakan.</li>
+                            <li><strong>Testing & debugging aplikasi:</strong> Menguji aplikasi agar bebas bug.</li>
+                        </ul>
+                    </div>`;
+                break;
+            case 'pemasaran':
+                materiContent = `
+                    <div class="materi">
+                        <h3>Materi Dasar Kelas 12 SMK - Bisnis Ritel / Pemasaran</h3>
+                        <ul>
+                            <li><strong>Strategi pemasaran produk:</strong> Cara mengenalkan produk agar menarik.</li>
+                            <li><strong>Perilaku konsumen:</strong> Mempelajari kebutuhan pelanggan.</li>
+                            <li><strong>Digital marketing:</strong> Promosi lewat media sosial, marketplace, SEO.</li>
+                            <li><strong>Manajemen penjualan & pelayanan pelanggan:</strong> Melayani konsumen dengan baik.</li>
+                            <li><strong>Etika bisnis & kewirausahaan:</strong> Usaha yang jujur, kreatif, bertanggung jawab.</li>
+                        </ul>
+                    </div>`;
+                break;
+        }
+        document.getElementById('materi').innerHTML = materiContent;
+        document.getElementById('materi').style.display = 'block';
+    }
+
+    function loadArticles() {
+        const articleList = document.getElementById('articleList');
+        articleList.innerHTML = '';
+        articles.forEach((article, index) => {
+            const articleDiv = document.createElement('div');
+            articleDiv.className = 'article';
+            articleDiv.innerHTML = `
+                <h3>${article.title}</h3>
+                <p>${article.content}</p>
+                <button onclick="saveToFavorites(${index})">Simpan ke Favorit</button>
+            `;
+            articleList.appendChild(articleDiv);
+        });
+    }
+
+    function saveToFavorites(index) {
+        const article = articles[index];
+        if (!favoriteArticles.includes(article)) {
+            favoriteArticles.push(article);
+            alert(`${article.title} telah disimpan ke favorit!`);
+        } else {
+            alert(`${article.title} sudah ada di favorit!`);
+        }
+    }
+
+    function loadFavorites() {
+        const favoriteList = document.getElementById('favoriteList');
+        favoriteList.innerHTML = '';
+        if (favoriteArticles.length === 0) {
+            favoriteList.innerHTML = '<p>Tidak ada artikel favorit.</p>';
+            return;
+        }
+        favoriteArticles.forEach(article => {
+            const favoriteDiv = document.createElement('div');
+            favoriteDiv.className = 'favorite';
+            favoriteDiv.innerHTML = `<h3>${article.title}</h3><p>${article.content}</p>`;
+            favoriteList.appendChild(favoriteDiv);
+        });
+    }
+
+    function searchMateri() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const jurusanElements = document.querySelectorAll('.jurusan');
+        jurusanElements.forEach(jurusan => {
+            const text = jurusan.innerText.toLowerCase();
+            jurusan.style.display = text.includes(input) ? 'block' : 'none';
+        });
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+</script>
+
+</body>
+</html>
